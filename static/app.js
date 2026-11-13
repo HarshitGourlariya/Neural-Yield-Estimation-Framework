@@ -76,13 +76,7 @@ async function init() {
         selectedWeatherLocation = locationKey;
         cancelWeatherRequest();
         resetWeatherFields(true);
-        if (district) window.GreenYieldLocal?.reachable().then((online) => {
-          if (online) refreshWeather();
-          else {
-            setText('weather-warning', window.GreenYieldI18n?.translate('No internet. Please enter this year’s field weather yourself.') || 'No internet. Please enter this year’s field weather yourself.');
-            setHidden('weather-warning', false);
-          }
-        });
+        if (district) window.GreenYieldLocal?.reachable().then((online) => { if (online) refreshWeather(); });
       }
     });
     const refreshButton = $('refresh-weather');
@@ -116,6 +110,7 @@ async function init() {
       input.addEventListener('change', () => checkFieldInput(input));
     });
     const sensorFile = $('sensor-json-file');
+    const sensorFileName = $('sensor-file-name');
     const sensorImport = $('import-sensor-json');
     const sensorText = $('sensor-json-text');
     const sensorStatus = $('sensor-import-status');
@@ -131,11 +126,11 @@ async function init() {
           input.value = Number(value); input.dispatchEvent(new Event('input', {bubbles:true})); input.dispatchEvent(new Event('change', {bubbles:true})); count++;
         }
       }
-      if (!count) throw new Error('No supported sensor values found. Expected temperature, humidity, pH, moisture or light readings.');
-      if (sensorStatus) sensorStatus.textContent = `${count} sensor reading${count===1?'':'s'} imported.`;
+      if (!count) throw new Error(window.GreenYieldI18n?.lang()==='hi'?'फ़ाइल में तापमान, नमी, pH, मिट्टी की नमी या रोशनी की सही रीडिंग नहीं मिली।':'No supported sensor values found. Expected temperature, humidity, pH, moisture or light readings.');
+      if (sensorStatus) sensorStatus.textContent = window.GreenYieldI18n?.lang()==='hi' ? `${count} सेंसर रीडिंग जोड़ी गईं।` : `${count} sensor reading${count===1?'':'s'} imported.`;
     };
-    sensorFile?.addEventListener('change', async () => { try { if (sensorFile.files?.[0]) applySensorJson(await sensorFile.files[0].text()); } catch (error) { if(sensorStatus)sensorStatus.textContent=error.message; } });
-    sensorImport?.addEventListener('click', () => { try { applySensorJson(sensorText?.value || ''); } catch (error) { if(sensorStatus)sensorStatus.textContent=error.message || 'Could not read the sensor JSON.'; } });
+    sensorFile?.addEventListener('change', async () => { try { const file=sensorFile.files?.[0]; if(sensorFileName) sensorFileName.textContent=file?.name || (window.GreenYieldI18n?.translate('No file selected') || 'No file selected'); if (file) applySensorJson(await file.text()); } catch (error) { if(sensorStatus)sensorStatus.textContent=window.GreenYieldI18n?.lang()==='hi'?'JSON फ़ाइल पढ़ी नहीं जा सकी।':error.message; } });
+    sensorImport?.addEventListener('click', () => { try { applySensorJson(sensorText?.value || ''); } catch (error) { if(sensorStatus)sensorStatus.textContent=window.GreenYieldI18n?.lang()==='hi'?'JSON रीडिंग नहीं पढ़ी जा सकीं।':error.message || 'Could not read the sensor JSON.'; } });
     populate('season', meta.seasons, t('Choose season'), (value) => t(value === 'Whole Year' ? 'All year' : value));
     populate('crop', [], t('Choose season first'));
     const seasonSelect = $('season');
@@ -152,6 +147,7 @@ async function init() {
     document.addEventListener('greenyield:language', () => {
       if (!meta?.districts_by_state) return;
       const t = (value) => window.GreenYieldI18n?.translate(value) || value;
+      if (sensorFileName && !sensorFile?.files?.length) sensorFileName.textContent = t('No file selected');
       const stateValue = $('state')?.value || '', districtValue = $('district')?.value || '';
       const seasonValue = $('season')?.value || '', cropValue = $('crop')?.value || '';
       populate('state', Object.keys(meta.districts_by_state).sort(), t('Choose state'), (value) => t(value.replace('AndhraPradesh', 'Andhra Pradesh').replace(/\s+/g, ' ')));
@@ -165,7 +161,7 @@ async function init() {
       if ($('crop')) $('crop').value = cropValue;
     });
   } catch (error) {
-    notify(M.service_error || 'The estimate service is temporarily unavailable. Please try again shortly.', true);
+    if (await window.GreenYieldLocal?.reachable?.()) notify(M.service_error || 'The estimate service is temporarily unavailable. Please try again shortly.', true);
   }
 }
 
@@ -244,6 +240,11 @@ async function refreshWeather() {
     setHidden('weather-warning', false);
     return;
   }
+  if (!await window.GreenYieldLocal?.reachable?.()) {
+    setHidden('weather-warning', true);
+    setText('weather-warning', '');
+    return;
+  }
   if (weatherController) weatherController.abort();
   const requestId = ++weatherRequestId;
   weatherController = typeof AbortController === 'function' ? new AbortController() : null;
@@ -267,7 +268,7 @@ async function refreshWeather() {
     let payload;
     try { payload = await response.json(); }
     catch (error) { throw new Error(`Parsing failed while reading the weather response: ${error.message || 'invalid JSON'}.`); }
-    if (!response.ok) throw new Error(payload.error || `Weather request failed with HTTP ${response.status}.`);
+    if (!response.ok) { const failure = new Error(payload.error || `Weather request failed with HTTP ${response.status}.`); failure.step = payload.step || 'weather request'; throw failure; }
     const validValues = payload.values && Object.keys(weatherRanges).every((field) => {
       const value = Number(payload.values[field]);
       const [min, max] = weatherRanges[field];
@@ -311,6 +312,11 @@ async function refreshWeather() {
     });
     onlineWeather = {};
     setHidden('weather-loading', true);
+    if (error.step === 'weather request') {
+      setHidden('weather-warning', true);
+      setText('weather-warning', '');
+      return;
+    }
     setText('weather-warning', `${error.message} Prediction remains available after you enter the weather values.`);
     setHidden('weather-warning', false);
   } finally {

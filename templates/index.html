@@ -15,7 +15,7 @@
     </aside>
     <main id="top" class="main-area">
       <section class="intro" id="forecast"><div class="intro-copy"><h1>Know your field.<br><em>Grow with confidence.</em></h1></div><div class="pwa-tools"><span id="connectivity-status" class="connectivity-status" role="status">Checking connection…</span><button id="language-toggle" type="button" class="language-toggle" aria-label="Change language">हिंदी</button><button id="install-app" type="button" class="language-toggle" hidden>Install app</button></div></section>
-      <div id="pwa-notice" class="pwa-notice" role="status" hidden></div><div id="offline-weather-prompt" class="pwa-notice" role="status" hidden></div><section class="install-guide" id="ios-install-guide" hidden></section>
+      <div id="pwa-notice" class="pwa-notice" role="status" hidden></div><section class="install-guide" id="ios-install-guide" hidden></section>
       <section class="content-grid">
         <form id="yield-form" class="form-column">
           <div class="section-heading"><div><h2>Tell us about your field</h2></div></div>
@@ -43,7 +43,7 @@
           </div>
           <div class="form-section sensor-form" id="sensor-panel"><div class="section-title"><span class="section-ico sensor-ico">◉</span><div><b>Soil sensors</b></div></div>
             <p class="sensor-import-note">ESP32 hotspot cannot connect directly to this secure app. Export readings as JSON from the sensor page, then import them here.</p>
-            <div class="sensor-import"><label for="sensor-json-file">Import sensor JSON</label><input id="sensor-json-file" type="file" accept="application/json,.json"><label for="sensor-json-text">Or paste JSON readings</label><textarea id="sensor-json-text" rows="3" placeholder='{"temperature": 25, "humidity": 60, "ph": 6.5, "soil_moisture": 42, "light_lux": 18000}'></textarea><button type="button" id="import-sensor-json" class="refresh-weather">Import readings</button><small id="sensor-import-status" role="status"></small></div>
+            <div class="sensor-import"><p class="sensor-field-label">Import sensor JSON</p><div class="sensor-file-picker"><input id="sensor-json-file" class="sensor-file-input" type="file" accept="application/json,.json"><label id="sensor-file-button" class="sensor-file-button" for="sensor-json-file"><span class="sensor-file-icon" aria-hidden="true">↥</span><span class="sensor-file-copy"><strong id="sensor-file-prompt">Select JSON file</strong><small id="sensor-file-name" data-i18n-skip>No file selected</small></span><span class="sensor-file-action">Browse</span></label></div><label class="sensor-field-label" for="sensor-json-text">Or paste JSON readings</label><textarea id="sensor-json-text" rows="3" placeholder='{"temperature": 25, "humidity": 60, "ph": 6.5, "soil_moisture": 42, "light_lux": 18000}'></textarea><button type="button" id="import-sensor-json" class="refresh-weather">Import readings</button><small id="sensor-import-status" role="status"></small></div>
             <div class="field-grid three"><label class="field"><span>Soil pH <i>*</i></span><input type="number" name="ph" min="0" max="14" step="0.1" value="6.5" required></label>
               <label class="field"><span>Soil moisture</span><div class="input-unit"><input type="number" name="soil_moisture" min="0" max="100" step="0.1" value="42"><span>%</span></div></label>
               <label class="field"><span>Light intensity</span><div class="input-unit"><input type="number" name="light_lux" min="0" max="200000" step="1" value="18000"><span>lux</span></div></label>

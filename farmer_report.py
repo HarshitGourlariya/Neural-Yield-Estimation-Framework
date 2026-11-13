@@ -70,8 +70,11 @@ def farmer_recommendations(narrative: dict) -> dict:
     cleaned["recommendations"] = recs
     if not cleaned["summary"]:
         cleaned["summary"] = M["normal_uncertainty"]
-    if not cleaned["next_steps"] or not any("agronomist" in item.casefold() or "कृषि" in item for item in cleaned["next_steps"]):
-        cleaned["next_steps"] = list(cleaned["next_steps"]) + [M["check_adviser"]]
+    if not cleaned["next_steps"] or not any("agronomist" in item.casefold() or "कृषि" in item or "kvk" in item.casefold() for item in cleaned["next_steps"]):
+        hindi = str(report.get("inputs", {}).get("language", "English")).casefold() == "hindi"
+        reminder = ("बड़े बदलाव से पहले स्थानीय कृषि विशेषज्ञ या नज़दीकी KVK से सलाह लें।" if hindi
+                    else M["check_adviser"])
+        cleaned["next_steps"] = list(cleaned["next_steps"]) + [reminder]
     return cleaned
 
 

@@ -141,12 +141,20 @@ def geocode_location(state: str, location: str, *, get=None, sleep=time.sleep) -
         raise WeatherServiceError("Select a state and district or city first.", "location lookup")
     key = ("geo", _normalize(state), _normalize(location))
 
+    # Some yield files retain the historic district label, while current
+    # geocoders index this administrative district as Khargone.
+    query_location = location
+    if _normalize(state) == "madhya pradesh" and _normalize(location) in {
+        "khargone west nimar", "khargone (west nimar)"
+    }:
+        query_location = "Khargone"
+
     def lookup():
-        known = _csv_coordinates(state, location)
+        known = _csv_coordinates(state, query_location)
         if known:
             return known
         try:
-            payload = _get_json(GEOCODING_URL, {"name": f"{location}, {state}", "count": 10,
+            payload = _get_json(GEOCODING_URL, {"name": f"{query_location}, {state}", "count": 10,
                 "language": "en", "format": "json"}, get=get, sleep=sleep)
         except WeatherServiceError as exc:
             raise WeatherServiceError(f"Location lookup failed for {location}, {state}: {exc}", "location lookup") from exc

@@ -48,6 +48,16 @@ class WeatherServiceTests(unittest.TestCase):
             "T2M": {d: 21.5 for d in days}, "RH2M": {d: 62.0 for d in days},
             "PRECTOTCORR": {d: 3.0 for d in days}}}}
 
+    def test_historic_khargone_name_uses_current_geocoder_name(self):
+        calls = []
+        def get(url, params, timeout):
+            calls.append(params)
+            return Response({"results": [{"country_code": "IN", "name": "Khargone",
+                "admin1": "Madhya Pradesh", "latitude": 21.82, "longitude": 75.61}]})
+        point = weather.geocode_location("Madhya Pradesh", "Khargone West Nimar", get=get, sleep=lambda _: None)
+        self.assertEqual((point["latitude"], point["longitude"]), (21.82, 75.61))
+        self.assertEqual(calls[0]["name"], "Khargone, Madhya Pradesh")
+
     def test_csv_location_and_annual_averaging(self):
         calls = []
         def get(url, params, timeout):

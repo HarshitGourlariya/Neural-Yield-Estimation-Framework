@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "data" / "reports.sqlite3"
+DB_PATH = Path(os.environ.get("GREENYIELD_DB_PATH", Path(__file__).resolve().parent / "data" / "reports.sqlite3"))
 
 
 def connect():

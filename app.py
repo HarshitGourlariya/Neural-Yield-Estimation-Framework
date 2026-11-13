@@ -150,7 +150,7 @@ def weather():
     try:
         result = get_weather(state, location)
     except WeatherServiceError as exc:
-        return jsonify({"error": f"Could not fetch weather: {exc} Enter the values manually."}), 502
+        return jsonify({"error": f"Could not fetch weather: {exc} Enter the values manually.", "step": exc.stage}), 502
     except Exception:
         app.logger.exception("Unexpected weather lookup failure")
         return jsonify({"error": "Online weather is temporarily unavailable. Enter the values manually."}), 502

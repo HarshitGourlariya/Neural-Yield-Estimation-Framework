@@ -163,8 +163,8 @@ def fallback_narrative(analysis: dict, language: str = "English") -> dict:
                    "स्थानीय कृषि विशेषज्ञ से सलाह लें।")
         findings = [f"संभावित उपज लगभग {y['yield_kg_ha']:.1f} kg/ha है।"]
         precautions = ["बारिश और तापमान के बदलाव पर खेत की निगरानी करें।"]
-        next_steps = ["खाद की मात्रा बदलने से पहले स्थानीय कृषि विस्तार कार्यालय से सलाह लें।",
-                      "ये सुझाव स्थानीय कृषि विशेषज्ञ या निकटतम कृषि विस्तार कार्यालय से जांचें।"]
+        next_steps = ["खाद की मात्रा बदलने से पहले स्थानीय कृषि विशेषज्ञ या नज़दीकी KVK से सलाह लें।",
+                      "ये सुझाव स्थानीय कृषि विशेषज्ञ या नज़दीकी KVK से जाँचें।"]
     else:
         summary = (f"Expected yield is about {y['yield_kg_ha']:.1f} kg/ha, or {y['total_tonnes']:.3f} tonnes for this field. "
                    f"Field risk is {risk['status']}. Check major decisions with a local agronomist.")

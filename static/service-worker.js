@@ -1,12 +1,12 @@
 /* GreenYield offline shell. Network-first pages, versioned immutable assets. */
-const VERSION = 'greenyield-pwa-v3';
+const VERSION = 'greenyield-pwa-v4';
 const SHELL = `${VERSION}-shell`;
 const DATA = `${VERSION}-data`;
 const PRECACHE = [
   '/', '/offline-report.html', '/manifest.webmanifest', '/static/styles.css', '/static/app.js',
   '/static/pwa.js', '/static/i18n.js', '/static/report.js', '/static/offline-report.js', '/static/model/inference.js',
   '/static/model/worker.js', '/static/model/yield-model.json', '/static/icons/icon-192.png',
-  '/static/icons/icon-512.png',
+  '/static/icons/icon-512.png', '/static/fonts/NotoSansDevanagari.ttf',
 ];
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()));

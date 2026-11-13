@@ -79,7 +79,7 @@ async function init() {
         if (district) window.GreenYieldLocal?.reachable().then((online) => {
           if (online) refreshWeather();
           else {
-            setText('weather-warning', 'No internet. Please enter this year’s field weather yourself.');
+            setText('weather-warning', window.GreenYieldI18n?.translate('No internet. Please enter this year’s field weather yourself.') || 'No internet. Please enter this year’s field weather yourself.');
             setHidden('weather-warning', false);
           }
         });
@@ -229,7 +229,7 @@ function validateWeatherField(field) {
   const [min, max] = weatherRanges[field];
   const value = Number(input.value);
   warning.textContent = Number.isFinite(value) && (value < min || value > max)
-    ? `Expected range: ${min} to ${max}${field === 'temperature' ? ' °C' : field === 'humidity' ? '%' : ' mm/year'}.`
+    ? `${window.GreenYieldI18n?.translate('Expected range') || 'Expected range'}: ${min} to ${max}${field === 'temperature' ? ' °C' : field === 'humidity' ? '%' : ' mm/year'}.`
     : '';
 }
 
@@ -240,7 +240,7 @@ async function refreshWeather() {
   const state = stateSelect.value;
   const location = locationSelect.value;
   if (!state || !location) {
-    setText('weather-warning', 'Choose a state and location to fetch online weather. You can enter the weather manually.');
+    setText('weather-warning', window.GreenYieldI18n?.translate('Choose a state and location to fetch online weather. You can enter the weather manually.') || 'Choose a state and location to fetch online weather. You can enter the weather manually.');
     setHidden('weather-warning', false);
     return;
   }

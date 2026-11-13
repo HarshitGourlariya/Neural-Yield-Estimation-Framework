@@ -2,14 +2,7 @@ services:
   - type: web
     name: greenyield
     runtime: docker
-    plan: standard
+    plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
-    disk:
-      name: greenyield-reports
-      mountPath: /var/data
-      sizeGB: 1
-    envVars:
-      - key: GREENYIELD_DB_PATH
-        value: /var/data/reports.sqlite3

@@ -1,5 +1,5 @@
 /* GreenYield offline shell. Network-first pages, versioned immutable assets. */
-const VERSION = 'greenyield-pwa-v5';
+const VERSION = 'greenyield-pwa-v6';
 const SHELL = `${VERSION}-shell`;
 const DATA = `${VERSION}-data`;
 const PRECACHE = [

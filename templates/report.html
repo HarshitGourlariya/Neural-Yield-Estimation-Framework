@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GreenYield · Your field report</title><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"></head>
+<body class="report-page"><main class="report-shell">
+  <header class="report-header"><a class="brand report-brand" href="/#forecast"><span class="brand-mark">✳</span><span>greenyield</span></a><div class="report-header-actions"><a class="report-link-button" href="/#forecast">{{ messages.report_return }}</a><button id="copy-report-link" class="report-link-button" type="button">{{ messages.copy_link }}</button><a id="download-pdf" class="report-primary-button" href="/report/{{ report.id }}/pdf">{{ messages.download_report }}</a></div></header>
+  <section class="report-intro"><div><h1 id="report-title"></h1></div></section>
+  <section class="report-grid"><section class="report-main-column">
+    <article class="report-card estimate-card"><h2>{{ messages.expected_yield }}</h2><div class="estimate-grid">
+      <div class="estimate-stat estimate-primary"><span>Yield per hectare</span><strong id="report-yield"></strong><b>kg/ha</b></div>
+      <div class="estimate-stat"><span>{{ messages.likely_range }}</span><strong id="report-range"></strong><b>kg/ha</b></div>
+      <div class="estimate-stat"><span>{{ messages.field_total }}</span><strong id="report-total"></strong><b>tonnes total</b></div>
+      <div class="estimate-risk"><span>{{ messages.risk_status }}</span><b id="report-risk-badge" class="risk-badge"></b></div>
+    </div></article>
+    <article class="report-card"><h2>{{ messages.field_outlook }}</h2><span id="summary-source" class="summary-source"></span><p id="narrative-summary" class="outlook-copy"></p><ul id="key-findings" class="finding-list"></ul></article>
+    <article class="report-card report-warnings-card"><h2>{{ messages.risk_watch }}</h2><div id="risk-factors" class="risk-grid"></div><h3>{{ messages.check_input_heading }}</h3><div id="quality-warnings" class="quality-list"></div><h3>{{ messages.field_details }}</h3><div id="input-summary" class="field-detail-grid"></div></article>
+    <article class="report-card"><h2>{{ messages.recommended_actions }}</h2><div id="recommendations" class="recommendation-list"></div><ul id="next-steps" class="next-step-list"></ul></article>
+    <article class="report-card"><h2>{{ messages.farm_previews }}</h2><div class="chart-grid">
+      <section class="chart-card"><h3>{{ messages.chart_fertilizer }}</h3><div id="chart-fertilizer" class="report-chart"></div><p id="chart-explanation" class="chart-explanation"></p></section>
+      <section class="chart-card"><h3>Pesticide amount preview</h3><div id="chart-pesticide" class="report-chart"></div><p id="pesticide-chart-explanation" class="chart-explanation"></p></section>
+      <section class="chart-card"><h3>Soil pH preview</h3><div id="chart-ph" class="report-chart"></div><p id="ph-chart-explanation" class="chart-explanation"></p></section>
+    </div></article>
+    <article class="report-card whatif-card"><h2>{{ messages.what_if }}</h2><p class="whatif-intro">Change one or more values to see an estimate preview. It does not tell you how much fertilizer or pesticide to use. For soil pH, get a soil test before applying any amendment.</p><div class="whatif-controls">
+      <label>Fertilizer for field (kg)<input id="whatif-fertilizer" type="number" min="0" max="1000000" step="0.1"></label>
+      <label>Pesticide for field (kg)<input id="whatif-pesticide" type="number" min="0" max="1000000" step="0.01"></label>
+      <label>Soil pH<input id="whatif-ph" type="number" min="0.1" max="14" step="0.1"></label>
+      <label>Annual rainfall (mm/year)<input id="whatif-rainfall" type="number" min="0" max="12000" step="0.1"></label>
+      <label>Annual temperature (°C)<input id="whatif-temperature" type="number" min="-10" max="55" step="0.1"></label>
+      <label>Annual humidity (%)<input id="whatif-humidity" type="number" min="0" max="100" step="0.1"></label>
+      <label>Advice language<select id="advice-language"><option>English</option><option>Hindi</option></select></label><button id="regenerate-advice" class="report-primary-button" type="button">Save updated advice</button></div><div id="whatif-result" class="whatif-result" hidden></div></article>
+  </section><aside class="report-side-column"><article class="report-card"><h2 id="side-crop"></h2><h3 id="side-location"></h3></article></aside></section>
+  </main><script>window.GREENYIELD_REPORT={{ report|tojson }}; window.GREENYIELD_MESSAGES={{ messages|tojson }};</script><script src="{{ url_for('static',filename='report.js') }}"></script></body></html>

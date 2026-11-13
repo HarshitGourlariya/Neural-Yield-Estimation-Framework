@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6ed"><meta name="description" content="Crop yield estimates for your field, online or offline."><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/static/icons/icon-192.png"><title>GreenYield · Field forecast</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top"><span class="brand-mark">✳</span><span>green<span class="brand-light">yield</span></span></a>
+      <a class="nav-item active" href="#forecast"><span class="nav-icon">⌁</span> Yield forecast</a>
+      <a class="nav-item" href="#sensor-panel"><span class="nav-icon">◉</span> Field readings</a>
+      <div class="sidebar-bottom"><div class="season-card"><span class="sun">☼</span><div><b>Growing with care</b></div><span class="leaf-art">✳</span></div></div>
+    </aside>
+    <main id="top" class="main-area">
+      <section class="intro" id="forecast"><div class="intro-copy"><h1>Know your field.<br><em>Grow with confidence.</em></h1></div><div class="pwa-tools"><span id="connectivity-status" class="connectivity-status" role="status">Checking connection…</span><button id="language-toggle" type="button" class="language-toggle" aria-label="Change language">हिंदी</button><button id="install-app" type="button" class="language-toggle" hidden>Install app</button></div></section>
+      <div id="pwa-notice" class="pwa-notice" role="status" hidden></div><div id="offline-weather-prompt" class="pwa-notice" role="status" hidden></div><section class="install-guide" id="ios-install-guide" hidden></section>
+      <section class="content-grid">
+        <form id="yield-form" class="form-column">
+          <div class="section-heading"><div><h2>Tell us about your field</h2></div></div>
+          <div class="form-section"><div class="section-title"><span class="section-ico">⌂</span><div><b>Farm & crop</b></div></div>
+            <div class="field-grid two"><label class="field"><span>State <i>*</i></span><select name="state" id="state" required><option value="">Choose state</option></select></label>
+              <label class="field"><span>Location (district or city) <i>*</i></span><select name="district" id="district" required disabled><option value="">Choose state first</option></select></label>
+              <label class="field"><span>When does your crop grow? <i>*</i></span><select name="season" id="season" required><option value="">Choose season first</option></select></label>
+              <label class="field"><span>Crop <i>*</i></span><select name="crop" id="crop" required disabled><option value="">Choose season first</option></select></label>
+              
+              <label class="field"><span>Field area <i>*</i></span><div class="input-unit"><input type="number" name="area_acres" step="0.01" min="0.01" value="1" required><span>acres</span></div></label>
+            </div>
+          </div>
+          <div class="form-section"><div class="section-title"><span class="section-ico weather-ico">☼</span><div><b>Weather conditions</b></div><button class="refresh-weather" type="button" id="refresh-weather">Refresh data</button></div>
+            <div class="weather-warning" id="weather-warning" role="status" hidden></div>
+            <div class="weather-loading" id="weather-loading" role="status" hidden><span class="loading-spinner"></span></div>
+            <div class="field-grid three"><label class="field"><span>Annual mean air temperature <i>*</i></span><div class="input-unit"><input type="number" name="temperature" id="temperature" min="-10" max="55" step="0.1" placeholder="Enter temperature" required><span>°C</span><span class="field-spinner" id="temperature-spinner" hidden></span></div><div class="weather-meta"><small hidden id="temperature-source"></small><button type="button" class="reset-weather" data-field="temperature" disabled>Reset to online value</button></div><small class="range-warning" id="temperature-warning"></small></label>
+              <label class="field"><span>Annual mean relative humidity <i>*</i></span><div class="input-unit"><input type="number" name="humidity" id="humidity" min="0" max="100" step="0.1" placeholder="Enter humidity" required><span>%</span><span class="field-spinner" id="humidity-spinner" hidden></span></div><div class="weather-meta"><small hidden id="humidity-source"></small><button type="button" class="reset-weather" data-field="humidity" disabled>Reset to online value</button></div><small class="range-warning" id="humidity-warning"></small></label>
+              <label class="field"><span>Annual rainfall <i>*</i></span><div class="input-unit"><input type="number" name="rainfall" id="rainfall" min="0" max="12000" step="0.1" placeholder="Enter rainfall" required><span>mm/year</span><span class="field-spinner" id="rainfall-spinner" hidden></span></div><div class="weather-meta"><small hidden id="rainfall-source"></small><button type="button" class="reset-weather" data-field="rainfall" disabled>Reset to online value</button></div><small class="range-warning" id="rainfall-warning"></small></label>
+            </div>
+          </div>
+          <div class="form-section"><div class="section-title"><span class="section-ico soil-ico">♧</span><div><b>Farm inputs</b></div></div>
+            <div class="field-grid two"><label class="field"><span>Fertilizer used <i>*</i></span><div class="input-unit"><input type="number" name="fertilizer_kg" min="0" step="0.1" value="50" required><span>kg total</span></div></label>
+              <label class="field"><span>Pesticide used <i>*</i></span><div class="input-unit"><input type="number" name="pesticide_kg" min="0" step="0.01" value="0.1" required><span>kg total</span></div></label>
+            </div>
+          </div>
+          <div class="form-section sensor-form" id="sensor-panel"><div class="section-title"><span class="section-ico sensor-ico">◉</span><div><b>Soil sensors</b></div></div>
+            <p class="sensor-import-note">ESP32 hotspot cannot connect directly to this secure app. Export readings as JSON from the sensor page, then import them here.</p>
+            <div class="sensor-import"><label for="sensor-json-file">Import sensor JSON</label><input id="sensor-json-file" type="file" accept="application/json,.json"><label for="sensor-json-text">Or paste JSON readings</label><textarea id="sensor-json-text" rows="3" placeholder='{"temperature": 25, "humidity": 60, "ph": 6.5, "soil_moisture": 42, "light_lux": 18000}'></textarea><button type="button" id="import-sensor-json" class="refresh-weather">Import readings</button><small id="sensor-import-status" role="status"></small></div>
+            <div class="field-grid three"><label class="field"><span>Soil pH <i>*</i></span><input type="number" name="ph" min="0" max="14" step="0.1" value="6.5" required></label>
+              <label class="field"><span>Soil moisture</span><div class="input-unit"><input type="number" name="soil_moisture" min="0" max="100" step="0.1" value="42"><span>%</span></div></label>
+              <label class="field"><span>Light intensity</span><div class="input-unit"><input type="number" name="light_lux" min="0" max="200000" step="1" value="18000"><span>lux</span></div></label>
+            </div>
+          </div>
+          <div class="form-actions"><button class="submit-btn" type="submit"><span>Estimate my yield</span><b>↗</b></button></div><section class="saved-reports" id="saved-reports" aria-live="polite" hidden><h3>Saved reports on this phone</h3><p>Sync uploads offline reports so you can open them from another device.</p><button type="button" id="sync-reports" class="refresh-weather">Sync saved reports</button><small id="sync-report-status" role="status"></small><ul id="saved-report-list"></ul></section>
+        </form>
+        <aside class="result-column"><div class="result-card" id="result-card"><div class="result-top"><div><h3>Harvest<br>estimate</h3></div><span class="result-sprout">✳</span></div><div id="empty-result" class="empty-result"><div class="empty-orbit"><span>✳</span></div><b>Your estimate starts here</b></div>
+            <div id="prediction-result" class="prediction-result" hidden><div class="yield-number"><strong id="yield-value">—</strong><span>kg / hectare</span></div><div class="yield-range"><span>LIKELY HARVEST RANGE</span><b id="yield-low">—</b><i>to</i><b id="yield-high">—</b></div><div class="result-divider"></div><div class="area-yield"><div><span>FOR YOUR FIELD</span><b id="total-value">—</b></div><span>tonnes total</span></div><div class="result-facts"><div><span>Crop</span><b id="fact-crop">—</b></div><div><span>Area</span><b id="fact-area">—</b></div><div><span>District</span><b id="fact-region">—</b></div></div></div>
+            </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+  <div id="report-loading" class="report-loading" role="status" aria-live="polite" hidden><div class="report-loading-card"><span class="loading-spinner"></span><h2>Preparing your crop report</h2></div></div>
+  <div id="toast" class="toast" role="status"></div>
+  <script>window.GREENYIELD_MESSAGES={{ messages|tojson }};</script><script src="/static/i18n.js"></script><script src="/static/model/inference.js"></script><script src="{{ url_for('static', filename='app.js') }}"></script><script src="/static/pwa.js"></script>
+</body>
+</html>
+
